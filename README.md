@@ -145,7 +145,14 @@ Part 1: Construction for GNLHD and some useful functions
 [14,]   13    2
 [15,]   11   10
 ```
-Part 2: Utilizing an efficient Sequential algorithm to get a optimal GNLHD
+Part 2: Calucate the Phi_p value with p=50 and t=2 for a.
+
+```s
+> Phi_p(Design=a,t=2,p=50)
+[1] 0.7169776
+```
+
+Part 3: Utilizing an efficient Sequential algorithm to get a optimal GNLHD
 
 ```s
 # Utilizing an efficient sequential algorithm with iteration=1000 to get a optimal GNLHD
@@ -167,7 +174,6 @@ from a.
 [13,]    3   13
 [14,]   13    2
 [15,]   11   10
-
 ```
 
 
