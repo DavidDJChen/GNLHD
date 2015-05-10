@@ -508,6 +508,7 @@ GNLHD<-R6Class("GNLHD",
                    num<-self$s[length(self$s)]
                    GNLH_Full<-self$GNLH_Full()
                    GNLH<-GNLH_Full[1:num,]
+                   return(GNLH)
                  }
                  ,
                  ##********************* Swap operation ************************##
