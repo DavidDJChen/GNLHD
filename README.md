@@ -174,6 +174,8 @@ from a.
 [13,]    3   13
 [14,]   13    2
 [15,]   11   10
+d 
+# The Phi_p value with p=50 a 
 ```
 
 
