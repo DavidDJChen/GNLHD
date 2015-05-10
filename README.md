@@ -186,6 +186,11 @@ This package is free and open source software, licensed under GPL-3.
 Daijun Chen and Shifeng Xiong, Generalized Nested Latin Hypercube Design and Its Optimization.
 ```
 
+## TODO
+
+*1. Deploy on CRAN:
+
+You can install the advanced version on [CRAN]()
 
 
 
