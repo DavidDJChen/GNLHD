@@ -24,7 +24,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 ```
 
 #Usage
-
+Part 1: Construction for GNLHD and some useful functions
 ```s
 >library(GNLHD)
 
@@ -144,11 +144,31 @@ R CMD INSTALL GNLHD_*.tar.gz
 [13,]    3   13
 [14,]   13    2
 [15,]   11   10
+```
+Part 2: Utilizing an efficient Sequential algorithm to get a optimal GNLHD
 
-#
+```s
+# Utilizing an efficient sequential algorithm with iteration=1000 to get a optimal GNLHD
+from a.
+> Optimal_GNLHD_SequentialAlg(GNLHD=u1, GNLH_Full=a, iteration=1000)
+      [,1] [,2]
+ [1,]   12   12
+ [2,]    2    3
+ [3,]    9    9
+ [4,]   15    4
+ [5,]    4   15
+ [6,]    1    1
+ [7,]   10    7
+ [8,]   14   11
+ [9,]    7    5
+[10,]    6   14
+[11,]    8    6
+[12,]    5    8
+[13,]    3   13
+[14,]   13    2
+[15,]   11   10
 
 ```
-
 
 
 
