@@ -190,7 +190,26 @@ Daijun Chen and Shifeng Xiong, Generalized Nested Latin Hypercube Design and Its
 
 *1. Deploy on CRAN:
 
-You can install the advanced version on [CRAN]()
+You can install the advanced version on [CRAN](http://cran.r-project.org/package=GNLHD):
+
+```s
+install.packages('GNLHD')
+```
+
+*2. Deploy on RForge:
+
+You can also install from [RForge](http://rforge.net/GNLHD/),which provides daily build of **GNLHD**;
+
+```s
+
+# update all existing packages
+update.packages(ask=FALSE, repos='http://cran.rstudio.org')
+install.packages('GNLHD', repos=c('http://rforge.net','http://cran.rstudio.org'),type='source')
+
+
+
+
+
 
 
 
