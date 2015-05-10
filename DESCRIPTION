@@ -1,0 +1,8 @@
+Package: GNLHD
+Title: The construction for GNLHD and its optimization
+Version: 0.0.1
+Authors@R: person("Daijun", "Chen", , "chendaijun13@mails.ucas.ac.cn", role = c("aut", "cre"))
+Description: This package provides the construction for GNLHD and two kinds of methods to optimize GNLHDs in R. The package includes 3 types of LHD-like design, LHD, NLHD and GNLHD. 
+Depends: R (>= 3.2.0)
+License: GPL-3
+LazyData: true
