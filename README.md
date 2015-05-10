@@ -25,7 +25,34 @@ R CMD INSTALL GNLHD_*.tar.gz
 
 #Usage
 
+```s
+library(GNLHD)
 
+# Construct a GNLHD class u1 with stucture s=(3,5) and q=2.
+u1<-GNLHD$new(s=c(3,5),q=2)
+
+# Show the GNLHD class u1.
+u1
+<GNLHD>
+  Public:
+    diagnose: function
+    GNLH: function
+    GNLH_Full: function
+    GNLH_illegal_set: function
+    GNLH_permutation: function
+    initialize: function
+    Lcm: 15
+    q: 2
+    s: 3 5
+    StandGNLHD: function
+    Swap: function
+    t: 5 3
+
+# Generate two generalized nested permutations with structure s=(3,5)
+u1$GNLH_Full
+
+
+```
 
 
 
