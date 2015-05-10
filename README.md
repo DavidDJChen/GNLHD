@@ -8,11 +8,11 @@ You can also install the development version from Github, which provides daily b
 GNLHD:
 
 ```s
-install.packages("devtools")
-library(devtools)
-install.packages("numbers")
-library(numbers)
-install_github("DavidDJChen/GNLHD")
+>install.packages("devtools")
+>library(devtools)
+>install.packages("numbers")
+>library(numbers)
+>install_github("DavidDJChen/GNLHD")
 ```
 
 If you know GIT and R CMD build, it's handly way:
@@ -26,13 +26,13 @@ R CMD INSTALL GNLHD_*.tar.gz
 #Usage
 
 ```s
-library(GNLHD)
+>library(GNLHD)
 
 # Construct a GNLHD class u1 with stucture s=(3,5) and q=2.
-u1<-GNLHD$new(s=c(3,5),q=2)
+>u1<-GNLHD$new(s=c(3,5),q=2)
 
 # Show the GNLHD class u1.
-u1
+>u1
 <GNLHD>
   Public:
     diagnose: function
@@ -49,7 +49,7 @@ u1
     t: 5 3
 
 # Generate two generalized nested permutations with structure s=(3,5)
-u1$GNLH_Full
+>u1$GNLH_Full
       [,1] [,2]
  [1,]    1    4
  [2,]   14    9
@@ -68,9 +68,16 @@ u1$GNLH_Full
 [15,]    3   14
 
 # Generate a GNLH with structure s=(3,5)
+> u1$GNLH()
+     [,1] [,2]
+[1,]    4    4
+[2,]   13    8
+[3,]    9   15
+[4,]   10    1
+[5,]    3   10
 
 # Generate a Standard GNLHD with s=(3,5)
-u1$StandGNLHD()
+>u1$StandGNLHD()
           [,1]      [,2]
 [1,] 0.2333333 0.4333333
 [2,] 0.5666667 0.3000000
