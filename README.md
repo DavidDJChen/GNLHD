@@ -48,11 +48,11 @@ R CMD INSTALL GNLHD_*.tar.gz
     Swap: function
     t: 5 3
 
-# Generate a generalzied nested permutation with structure s=(3,5)
+# Generate a generalzied nested permutation with structure s=(3,5).
 > u1$GNLH_permutation()
  [1] 10 14  2  9  4  7 15  6  1 13  3  5  8 11 12
 
-# Generate q generalized nested permutations with structure s=(3,5)
+# Generate q generalized nested permutations with structure s=(3,5).
 >u1$GNLH_Full
       [,1] [,2]
  [1,]    1    4
@@ -71,7 +71,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 [14,]    4    7
 [15,]    3   14
 
-# Generate a GNLH structure s=(3,5) and q=2
+# Generate a GNLH structure s=(3,5) and q=2.
 > u1$GNLH()
      [,1] [,2]
 [1,]    4    4
@@ -80,7 +80,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 [4,]   10    1
 [5,]    3   10
 
-# Generate a Standard GNLHD with s=(3,5) and q=2
+# Generate a Standard GNLHD with s=(3,5) and q=2.
 >u1$StandGNLHD()
           [,1]      [,2]
 [1,] 0.2333333 0.4333333
@@ -89,7 +89,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 [4,] 0.9000000 0.1000000
 [5,] 0.1000000 0.8333333
 
-# Do swap-in operation on a.
+# Do layer-in swap operation on a in the 2nd layer and  the 1st column.
 > a<-u1$GNLH_Full()
 > a
       [,1] [,2]
@@ -126,7 +126,24 @@ R CMD INSTALL GNLHD_*.tar.gz
 [14,]   13    2
 [15,]   11   10
 
-
+# Do  layer-between swap operation on a in the 2nd layer and  the 1st column.
+> u1$Swap(a, structure=c(3,5),column=1, Swap_type="between", Swap_layer=2,lcm=15) 
+      [,1] [,2]
+ [1,]   12   12
+ [2,]    2    3
+ [3,]    9    9
+ [4,]   14    6
+ [5,]    6   14
+ [6,]    1    1
+ [7,]   10    7
+ [8,]   15   11
+ [9,]    7    4
+[10,]    5   15
+[11,]    8    5
+[12,]    4    8
+[13,]    3   13
+[14,]   13    2
+[15,]   11   10
 
 ```
 
