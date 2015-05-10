@@ -48,7 +48,11 @@ R CMD INSTALL GNLHD_*.tar.gz
     Swap: function
     t: 5 3
 
-# Generate two generalized nested permutations with structure s=(3,5)
+# Generate a generalzied nested permutation with structure s=(3,5)
+> u1$GNLH_permutation()
+ [1] 10 14  2  9  4  7 15  6  1 13  3  5  8 11 12
+
+# Generate q generalized nested permutations with structure s=(3,5)
 >u1$GNLH_Full
       [,1] [,2]
  [1,]    1    4
@@ -67,7 +71,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 [14,]    4    7
 [15,]    3   14
 
-# Generate a GNLH with structure s=(3,5)
+# Generate a GNLH structure s=(3,5) and q=2
 > u1$GNLH()
      [,1] [,2]
 [1,]    4    4
@@ -76,7 +80,7 @@ R CMD INSTALL GNLHD_*.tar.gz
 [4,]   10    1
 [5,]    3   10
 
-# Generate a Standard GNLHD with s=(3,5)
+# Generate a Standard GNLHD with s=(3,5) and q=2
 >u1$StandGNLHD()
           [,1]      [,2]
 [1,] 0.2333333 0.4333333
@@ -85,9 +89,11 @@ R CMD INSTALL GNLHD_*.tar.gz
 [4,] 0.9000000 0.1000000
 [5,] 0.1000000 0.8333333
 
-
+#
 
 ```
+
+
 
 
 
