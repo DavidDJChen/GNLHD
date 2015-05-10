@@ -174,14 +174,17 @@ from a.
 [13,]    3   13
 [14,]   13    2
 [15,]   11   10
-d 
-# The Phi_p value with p=50 a 
+
 ```
+## License
 
+This package is free and open source software, licensed under GPL-3.
 
+## References
 
-
-
+```s
+Daijun Chen and Shifeng Xiong, Generalized Nested Latin Hypercube Design and Its Optimization.
+```
 
 
 
