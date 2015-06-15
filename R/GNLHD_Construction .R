@@ -58,7 +58,9 @@ LHD<-R6Class("LHD",
                },
                StandLHD=function(){
                  n<-self$s[length(self$s)]#number of samples
-                 StandLHD<-(self$LH()-runif(n,min=0,max=1))/n
+                 dim<-self$q#dimension of samples
+                 rand_mat<-matrix(runif(n*dim,min=0,max=1),ncol=dim)
+                 StandLHD<-(self$LH()-rand_mat)/n
                  return(StandLHD)
                }
              )
