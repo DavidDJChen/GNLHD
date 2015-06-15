@@ -716,7 +716,7 @@ GNLHD<-R6Class("GNLHD",
                    n<-self$s[length(self$s)]
                    dim<-self$q
                    rand_mat<-matrix(runif(dim*n,min=0,max=1),ncol=dim)
-                   StandGNLHD<-(self$GNLH()-rand-mat)/lcm
+                   StandGNLHD<-(self$GNLH()-rand_mat)/lcm
                    return(StandGNLHD)
                  }
                  ##******************************************************************************##
