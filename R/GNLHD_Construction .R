@@ -713,7 +713,10 @@ GNLHD<-R6Class("GNLHD",
                  ##******************************* StandGNLHD ***********************************##
                  StandGNLHD=function(){
                    lcm<-self$Lcm#number of samples
-                   StandGNLHD<-(self$GNLH()-0.5)/lcm
+                   n<-self$s[length(self$s)]
+                   dim<-self$q
+                   rand_mat<-matrix(runif(dim*n,min=0,max=1),ncol=dim)
+                   StandGNLHD<-(self$GNLH()-rand-mat)/lcm
                    return(StandGNLHD)
                  }
                  ##******************************************************************************##
