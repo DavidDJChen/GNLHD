@@ -58,7 +58,7 @@ LHD<-R6Class("LHD",
                },
                StandLHD=function(){
                  n<-self$s[length(self$s)]#number of samples
-                 StandLHD<-(self$LH()-0.5)/n
+                 StandLHD<-(self$LH()-runif(1,min=0,max=1))/n
                  return(StandLHD)
                }
              )
