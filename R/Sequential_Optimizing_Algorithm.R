@@ -3,7 +3,158 @@
 #'Is_repeat function
 #'@include Sequential_Optimizing_Algorithm.R
 ##***********************************************************************************##
+###*********** the same layer operation ****************###
+samelayer_exchange <- function(column,J1){
+  J1 <- J1
+  column <- column
+  l <- length(column)
+  if(J1 <= (l*(l-1)/2)){
+    J1 <- J1
+  }else J1 <- l*(l-1)/2 #Judging whether J1 is larger than 
+  #possible exchanging number
+  exchange_output <- matrix(rep(column,J1),nrow=l)
+  count <- 1
+  if(count == 1){
+    i <- sample(seq(from=1,to=l-1),1)
+    if(i == l-1){
+      j = l
+    }else{
+      j <- sample(seq(from = i+1,to = l), 1)
+    }
+    column_exchange <- column
+    column_exchange[i] <- column[j]
+    column_exchange[j] <- column[i]#exchanging the two elements 
+    exchange_output[,count] <- column_exchange
+    count <- count+1
+  }
+  while(count <= J1){
+    i <- sample(seq(from = 1,to = l-1),1)
+    if(i == l-1){
+      j = l
+    }else{
+      j <- sample(seq(from = i+1,to = l),1)
+    }
+    column_exchange <- column
+    column_exchange[i] <- column[j]
+    column_exchange[j] <- column[i]#exchanging the two elements 
+    discard <- rep(0,count-1)
+    for(k in seq(1,count-1)){
+      if(all(exchange_output[,k] == column_exchange)){
+        discard[k] <- 1
+      }else discard[k] <- 2
+    }#Checking whether any exchanged column is equal to lastest column  
+    
+    if(all(discard == 2)){ 
+      exchange_output[,count] <- column_exchange
+      count <- count+1
+    }
+  }
+  return(exchange_output) 
+}
+###*****************************************************###
+
+###**************** Inner Loop of ESE for GNLHD******************###
+innerloop <- function(GNLHD_best,GNLHD,s,M,J,t,p,T_h,lcm){#The inner loop function 
+  n_acpt <- 0
+  n_imp <- 0
+  M <- M #The number of upmost column operation
+  J <- J #The number of total new GNLHDs
+  s <- s #The structure of GNLHD
+  T_h <- T_h
+  GNLHD <- GNLHD
+  column_num <- dim(GNLHD)[2]
+  number_in <- J #The number of layer-in swap operations 
+  
+  
+  for(i in seq(1,M-1)){
+    column_index <- (i%%column_num)+1 #The index of operating column
+    column_operate <- GNLHD[,column_index] #The column operating
+    column_exchange_in1 <- samelayer_exchange(column_operate[seq(1,s[1])],number_in) #The layer-in operation
+    column_exchange_in <- matrix(rep(column_operate,number_in),
+                                 nrow=length(column_operate))
+    column_exchange_in[seq(1,s[1]),seq(1,number_in)] <- column_exchange_in1 #The new GNLHDs by layer-in operation
+    
+    
+    column_exchange <- column_exchange_in #The new GNLHDs by two kinds of operations 
+    t = t #variable parameter for Phi_p value
+    p = p #variable parameter for Phi_p value
+    Phi_p_value<-rep(0,dim(column_exchange)[2])
+    GNLHD_exchange<-GNLHD
+    for(j in seq(1,dim(column_exchange)[2])){ #get all design Phi_p_value
+      GNLHD_exchange_prep <- GNLHD_exchange
+      GNLHD_exchange_prep[,column_index] <- column_exchange[,j]
+      Phi_p_value[j] <- Phi_p((GNLHD_exchange_prep[1:s[1],]-0.5)/lcm,t,p)
+    } 
+    try_value <- min(Phi_p_value)#It is possible to get more than one samllest try_index
+    try_index <- min(which(Phi_p_value==try_value))#we get the smallest coordiate
+    GNLHD_try <- GNLHD
+    GNLHD_try[,column_index] <- column_exchange[,try_index]
+    if((Phi_p_value[try_index]-Phi_p((GNLHD[1:s[1],]-0.5)/lcm,t,p)) <= T_h*runif(min=0,max=1,1)){
+      GNLHD <- GNLHD_try
+      n_acpt <- n_acpt+1
+      if(Phi_p((GNLHD[1:s[1],]-0.5)/lcm,t,p) < Phi_p((GNLHD_best[1:s[1],]-0.5)/lcm,t,p)){
+        GNLHD_best <- GNLHD
+        n_imp <- n_imp+1
+      }
+    }  
+  }
+  return(GNLHD_best)
+}
+###********************************************************************###
+
+
+###***************** outerloop of ESE *********************************###
+outerloop<-function(GNLHD_initial,s,T_h_initial=0.1,M=100,J=6,t=2,p=50,
+                    tolerance=0.1,alpha=c(0.8,0.9,0.7),lcm){
+  M <- M
+  J <- J 
+  t <- t # The Phi_p variable
+  p <- p # The Phi_p variable
+  tolerance <- tolerance
+  alpha <- alpha
+  lcm <- lcm
+  
+  GNLHD <- GNLHD_initial
+  GNLHD_best <- GNLHD
+  T_h <- T_h_initial # Initial value is a small value
+  for(l in 1:10){ # The convergence criteria
+    GNLHD_oldbest <- GNLHD_best
+    i <- 0
+    n_acpt <- 0
+    n_imp <- 0
+    GNLHD_best <- innerloop(GNLHD_best,GNLHD,s,M,J,t,p,T_h,lcm)
+    if((Phi_p((GNLHD_oldbest[1:s[1],]-0.5)/lcm,t,p)-Phi_p((GNLHD_best[1:s[1],]-0.5)/lcm,t,p)) > tolerance){
+      flag_imp <- 1
+    }else{
+      flag_imp <- 0
+    }
+    if(flag_imp == 1){ # The improvement process
+      if((n_acpt/M >= 0.1)&((n_imp/M) < (n_acpt/M))){
+        T_h <- alpha[1]*T_h
+      }else{
+        if((n_acpt/M>=0.1)&((n_imp/M) == (n_acpt/M))){
+          T_h <- T_h
+        }else{
+          T_h <- T_h/alpha[1]
+        }
+      }
+    }else{
+      if((n_acpt/M) < 0.1){
+        T_h <- T_h/alpha[3]
+      }else{
+        T_h <- T_h*alpha[2]
+      }
+    }
+  }
+  return(GNLHD_best)
+}
+
+###****************************************************************###  
+
+
+##***********************************************************************************##
 ##*************************** An efficient sequential algorithm *********************##
+
 Is_repeat=function(Design){
   Is_repeat<-0
   row<-dim(Design)[1]
@@ -30,152 +181,7 @@ Optimal_GNLHD_SequentialAlg=function(GNLHD,GNLH_Full,iteration,T_h_initial=0.1,M
   lcm<-GNLHD$Lcm
   q<-GNLHD$q
   
-###*********** the same layer operation ****************###
-samelayer_exchange <- function(column,J1){
-    J1 <- J1
-    column <- column
-    l <- length(column)
-    if(J1 <= (l*(l-1)/2)){
-      J1 <- J1
-    }else J1 <- l*(l-1)/2 #Judging whether J1 is larger than 
-    #possible exchanging number
-    exchange_output <- matrix(rep(column,J1),nrow=l)
-    count <- 1
-    if(count == 1){
-      i <- sample(seq(from=1,to=l-1),1)
-      if(i == l-1){
-        j = l
-      }else{
-        j <- sample(seq(from = i+1,to = l), 1)
-      }
-      column_exchange <- column
-      column_exchange[i] <- column[j]
-      column_exchange[j] <- column[i]#exchanging the two elements 
-      exchange_output[,count] <- column_exchange
-      count <- count+1
-    }
-    while(count <= J1){
-      i <- sample(seq(from = 1,to = l-1),1)
-      if(i == l-1){
-        j = l
-      }else{
-        j <- sample(seq(from = i+1,to = l),1)
-      }
-      column_exchange <- column
-      column_exchange[i] <- column[j]
-      column_exchange[j] <- column[i]#exchanging the two elements 
-      discard <- rep(0,count-1)
-      for(k in seq(1,count-1)){
-        if(all(exchange_output[,k] == column_exchange)){
-          discard[k] <- 1
-        }else discard[k] <- 2
-      }#Checking whether any exchanged column is equal to lastest column  
-      
-      if(all(discard == 2)){ 
-        exchange_output[,count] <- column_exchange
-        count <- count+1
-      }
-    }
-    return(exchange_output) 
-  }
-  ###*****************************************************###
-  
-  ###**************** Inner Loop of ESE for GNLHD******************###
-  innerloop <- function(GNLHD_best,GNLHD,s,M,J,t,p,T_h,lcm){#The inner loop function 
-    n_acpt <- 0
-    n_imp <- 0
-    M <- M #The number of upmost column operation
-    J <- J #The number of total new GNLHDs
-    s <- s #The structure of GNLHD
-    T_h <- T_h
-    GNLHD <- GNLHD
-    column_num <- dim(GNLHD)[2]
-    number_in <- J #The number of layer-in swap operations 
-    
-    
-    for(i in seq(1,M-1)){
-      column_index <- (i%%column_num)+1 #The index of operating column
-      column_operate <- GNLHD[,column_index] #The column operating
-      column_exchange_in1 <- samelayer_exchange(column_operate[seq(1,s[1])],number_in) #The layer-in operation
-      column_exchange_in <- matrix(rep(column_operate,number_in),
-                                   nrow=length(column_operate))
-      column_exchange_in[seq(1,s[1]),seq(1,number_in)] <- column_exchange_in1 #The new GNLHDs by layer-in operation
-      
-      
-      column_exchange <- column_exchange_in #The new GNLHDs by two kinds of operations 
-      t = t #variable parameter for Phi_p value
-      p = p #variable parameter for Phi_p value
-      Phi_p_value<-rep(0,dim(column_exchange)[2])
-      GNLHD_exchange<-GNLHD
-      for(j in seq(1,dim(column_exchange)[2])){ #get all design Phi_p_value
-        GNLHD_exchange_prep <- GNLHD_exchange
-        GNLHD_exchange_prep[,column_index] <- column_exchange[,j]
-        Phi_p_value[j] <- Phi_p((GNLHD_exchange_prep[1:s[1],]-0.5)/lcm,t,p)
-      } 
-      try_value <- min(Phi_p_value)#It is possible to get more than one samllest try_index
-      try_index <- min(which(Phi_p_value==try_value))#we get the smallest coordiate
-      GNLHD_try <- GNLHD
-      GNLHD_try[,column_index] <- column_exchange[,try_index]
-      if((Phi_p_value[try_index]-Phi_p((GNLHD[1:s[1],]-0.5)/lcm,t,p)) <= T_h*runif(min=0,max=1,1)){
-        GNLHD <- GNLHD_try
-        n_acpt <- n_acpt+1
-        if(Phi_p((GNLHD[1:s[1],]-0.5)/lcm,t,p) < Phi_p((GNLHD_best[1:s[1]]-0.5)/lcm,t,p)){
-          GNLHD_best <- GNLHD
-          n_imp <- n_imp+1
-        }
-      }  
-    }
-    return(GNLHD_best)
-  }
-  ###********************************************************************###
-  
-  
-  ###***************** outerloop of ESE *********************************###
-  outerloop<-function(GNLHD_initial,s,T_h_initial=0.1,M=100,J=6,t=2,p=50,
-                      tolerance=0.1,alpha=c(0.8,0.9,0.7),lcm){
-    M <- M
-    J <- J 
-    t <- t # The Phi_p variable
-    p <- p # The Phi_p variable
-    tolerance <- tolerance
-    alpha <- alpha
-    
-    GNLHD <- GNLHD_initial
-    GNLHD_best <- GNLHD
-    T_h <- T_h_initial # Initial value is a small value
-    for(l in 1:10){ # The convergence criteria
-      GNLHD_oldbest <- GNLHD_best
-      i <- 0
-      n_acpt <- 0
-      n_imp <- 0
-      GNLHD_best <- innerloop(GNLHD_best,GNLHD,s,M,J,t,p,T_h,lcm)
-      if((Phi_p((GNLHD_oldbest[1:s[1],]-0.5)/lcm,t,p)-Phi_p((GNLHD_best[1:s[1],]-0.5)/lcm,t,p)) > tolerance){
-        flag_imp <- 1
-      }else{
-        flag_imp <- 0
-      }
-      if(flag_imp == 1){ # The improvement process
-        if((n_acpt/M >= 0.1)&((n_imp/M) < (n_acpt/M))){
-          T_h <- alpha[1]*T_h
-        }else{
-          if((n_acpt/M>=0.1)&((n_imp/M) == (n_acpt/M))){
-            T_h <- T_h
-          }else{
-            T_h <- T_h/alpha[1]
-          }
-        }
-      }else{
-        if((n_acpt/M) < 0.1){
-          T_h <- T_h/alpha[3]
-        }else{
-          T_h <- T_h*alpha[2]
-        }
-      }
-    }
-    return(GNLHD_best)
-  }
-  
-  ###****************************************************************###  
+
   
   GNLH_FULL<-outerloop(GNLHD_initial=GNLH_Full,s=s,T_h_initial=0.1,M=100,J=6,t=2,p=50,
                       tolerance=0.1,alpha=c(0.8,0.9,0.7),lcm=lcm) # Optimze the first layer by using ESE algorithm
@@ -224,5 +230,6 @@ samelayer_exchange <- function(column,J1){
   }
   return(GNLH_Full)
 }
+##***************************************************************************##
 ##***************************************************************************##
 #'@export
