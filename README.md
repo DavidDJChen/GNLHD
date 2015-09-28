@@ -157,7 +157,8 @@ Part 3: Utilizing an efficient Sequential algorithm to get a optimal GNLHD
 ```s
 # Utilizing an efficient sequential algorithm with iteration=1000 to get a optimal GNLHD
 from a.
-> Optimal_GNLHD_SequentialAlg(GNLHD=u1, GNLH_Full=a, iteration=1000)
+> Optimal_GNLHD_SequentialAlg(GNLHD=u1, GNLH_Full=a, iteration=1000,T_h_initial=0.1,M=100,J=6,t=2,p=50,
+                                     tolerance=0.1,alpha=c(0.8,0.9,0.7))
       [,1] [,2]
  [1,]   12   12
  [2,]    2    3
