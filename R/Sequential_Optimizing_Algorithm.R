@@ -225,7 +225,8 @@ Optimal_GNLHD_SequentialAlg=function(GNLHD,GNLH_Full,iteration,T_h_initial=0.1,M
       col_swap<-sample(q,1)
       GNLH_try_Full<-GNLHD$Swap(GNLH_Full,s,col_swap,"between",k,lcm)
       if(Phi_p((GNLH_try_Full[1:s[k],]-0.5)/lcm,2,50) < Phi_p((GNLH_Full[1:s[k]-0.5)/lcm,2,50)){
-        GNLH_Full<-GNLH_try_Full}
+        GNLH_Full<-GNLH_try_Full
+      }
     }
   }
   return(GNLH_Full)
