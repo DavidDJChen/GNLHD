@@ -172,26 +172,40 @@ Is_repeat=function(Design){
 ##**************************************************************##
 #'Optimal_GNLHD_SequentialAlg function
 ##**************************************************************##
-Optimal_GNLHD_SequentialAlg=function(GNLHD,GNLH_Full,iteration,T_h_initial=0.1,M=100,J=6,t=2,p=50,
+Optimal_GNLHD_SequentialAlg=function(GNLHD_in,GNLH_Full,iteration,w,T_h_initial=0.1,M=100,J=6,t=2,p=50,
                                      tolerance=0.1,alpha=c(0.8,0.9,0.7)){
   GNLH_Full<-GNLH_Full
-  s<-GNLHD$s
+  s<-GNLHD_in$s
   m<-length(s) #the number of layers
-  t<-GNLHD$t
-  lcm<-GNLHD$Lcm
-  q<-GNLHD$q
+  t<-GNLHD_in$t
+  lcm<-GNLHD_in$Lcm
+  q<-GNLHD_in$q
+  w<-w
+  M<-M
+  J<-J
+  t<-t
+  p<-p
+  tolerance<-tolerance
+  alpha<-alpha
   
-
-  
-  GNLH_FULL<-outerloop(GNLHD_initial=GNLH_Full,s=s,T_h_initial=0.1,M=100,J=6,t=2,p=50,
-                      tolerance=0.1,alpha=c(0.8,0.9,0.7),lcm=lcm) # Optimze the first layer by using ESE algorithm
+  GNLH_Full<-outerloop(GNLHD_initial=GNLH_Full,s,T_h_initial=0.01,M=30,J=4,t=2,p=50,
+                       tolerance=0.1,alpha=c(0.8,0.9,0.7),lcm=720) # Optimze the first layer by using ESE algorithm
   for(k in seq(from=2,to=m)){
     if(Is_repeat(ceiling(GNLH_Full[1:s[k],]/t[k-1]))==0){
       for(l in 1:iteration){
         col_swap<-sample(q,1)
-        GNLH_try_Full<-GNLHD$Swap(GNLH_Full,s,col_swap,"between",k,lcm)
-        if(Phi_p((GNLH_try_Full[1:s[m],]-0.5)/lcm,2,50) < Phi_p((GNLH_Full[1:s[m],]-0.5)/lcm,2,50)){
-          GNLH_Full<-GNLH_try_Full}
+        GNLH_try_Full<-GNLHD_in$Swap(GNLH_Full,s,col_swap,"between",k,lcm)
+        f_value_try<-0
+        f_value<-0
+        for(v in 1:length(s)){
+          f_value_try<-f_value_try+w[v]*Phi_p((GNLH_try_Full[1:s[v],]-0.5)/lcm,2,50)
+        }
+        for(v in 1:length(s)){
+          f_value<-f_value+w[v]*Phi_p((GNLH_Full[1:s[v],]-0.5)/lcm,2,50)
+        }
+        if(f_value_try<f_value){
+          GNLH_Full<-GNLH_try_Full
+        }
       }
     }else{
       for(e in 1:iteration){
@@ -215,6 +229,9 @@ Optimal_GNLHD_SequentialAlg=function(GNLHD,GNLH_Full,iteration,T_h_initial=0.1,M
         GNLH_try_Full<-GNLH_Full
         GNLH_try_Full[i_row,col_swap]<-GNLH_Full[j_row,col_swap]
         GNLH_try_Full[j_row,col_swap]<-GNLH_Full[i_row,col_swap]
+        if(Is_repeat(ceiling(GNLH_try_Full[1:s[k],]/t[k-1]))<Is_repeat(ceiling(GNLH_Full[1:s[k],]/t[k-1]))){
+          GNLH_Full<-GNLH_try_Full
+        }
         if(Is_repeat(ceiling(GNLH_try_Full[1:s[k],]/t[k-1]))==0){
           GNLH_Full<-GNLH_try_Full
           break
@@ -223,8 +240,16 @@ Optimal_GNLHD_SequentialAlg=function(GNLHD,GNLH_Full,iteration,T_h_initial=0.1,M
     }
     for(l in 1:iteration){
       col_swap<-sample(q,1)
-      GNLH_try_Full<-GNLHD$Swap(GNLH_Full,s,col_swap,"between",k,lcm)
-      if(Phi_p((GNLH_try_Full[1:s[k],]-0.5)/lcm,2,50) < Phi_p((GNLH_Full[1:s[k]-0.5)/lcm,2,50)){
+      GNLH_try_Full<-GNLHD_in$Swap(GNLH_Full,s,col_swap,"between",k,lcm)
+      f_value_try<-0
+      f_value<-0
+      for(v in 1:length(s)){
+        f_value_try<-f_value_try+w[v]*Phi_p((GNLH_try_Full[1:s[v],]-0.5)/lcm,2,50)
+      }
+      for(v in 1:length(s)){
+        f_value<-f_value+w[v]*Phi_p((GNLH_Full[1:s[v],]-0.5)/lcm,2,50)
+      }
+      if(Phi_p((GNLH_try_Full[1:s[k],]-0.5)/lcm,2,50)<Phi_p((GNLH_Full[1:s[k],]-0.5)/lcm,2,50)){
         GNLH_Full<-GNLH_try_Full
       }
     }
