@@ -541,7 +541,10 @@ GNLHD<-R6Class("GNLHD",
                          for(j in 2:length(s)){
                            if((positioni>s[j-1])&&(positioni<=s[j])){
                              positionlayeri<-j
-                           }  
+                           }
+                           if(positioni<s[1]){
+                             positionlayeri<-1
+                           }
                          }
                          judge<-rep(NA,positionlayeri-layer)
                          p=1
